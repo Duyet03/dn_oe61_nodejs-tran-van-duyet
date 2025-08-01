@@ -12,8 +12,13 @@ import { JwtModule } from '@nestjs/jwt';
 import * as path from 'path';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { LanguageMiddleware } from './common/middleware/language.middleware';
+import { RoleService } from './module/role/role.service';
+import { RoleModule } from './module/role/role.module';
+import { PlanService } from './module/plan/plan.service';
+import { PlanModule } from './module/plan/plan.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ 
@@ -80,6 +85,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     UsersModule,
     CategoryModule,
     AuthModule,
+    RoleModule,
+    PlanModule,
   ],
   controllers: [AppController],
   providers: [AppService],

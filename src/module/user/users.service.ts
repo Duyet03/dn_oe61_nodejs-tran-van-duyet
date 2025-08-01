@@ -18,36 +18,64 @@ export class UsersService {
   ) {}
 
   async login(email: string): Promise<User | undefined> {
-    const user = await this.usersRepository.findOne({ 
+    const user = await this.usersRepository.findOne({
       where: { email },
       relations: ['role'],
     });
     return user ?? undefined;
   }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: Partial<UpdateUserDto>) {
+    const existing = await this.usersRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+    if (existing) {
+      return false;
+    }
+    
+    const user = this.usersRepository.create(createUserDto);
+    return this.usersRepository.save(user);
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(page: number, limit: number): Promise<[User[], number]> {
+    const [result, total] = await this.usersRepository.findAndCount({
+      relations: ['role', 'plan'],
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { id: 'DESC' }, 
+    });
+
+    return [result, total];
   }
 
 
   async findOne(id: number): Promise<User | null> {
     return await this.usersRepository.findOne({
       where: { id },
-      relations: ['role'], // <-- Load luôn thông tin của role
+      relations: ['role'], 
     });
   }
 
+  // async update(id: number, productData: Partial<Product>) {
+  //       productData.updated_at = new Date();
+  //       await this.productRepository.update(id, productData);
+  //       return this.productRepository.findOneBy({id});
+  //   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: Partial<UpdateUserDto>) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    await this.usersRepository.update(id, updateUserDto);
+    return this.usersRepository.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user = this.usersRepository.findOneBy({id});
+    await this.usersRepository.delete(id);
+    return user;
   }
 
   async register(createUserDto: CreateUserDto): Promise<User> {

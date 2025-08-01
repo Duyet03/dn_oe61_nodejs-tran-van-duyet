@@ -6,7 +6,9 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as session from 'express-session';
-import { I18nMiddleware } from 'nestjs-i18n';
+import { I18nMiddleware, I18nValidationPipe } from 'nestjs-i18n';
+import { ValidationPipe } from '@nestjs/common';
+
 
 
 async function bootstrap() {
@@ -23,6 +25,14 @@ async function bootstrap() {
         maxAge: 60 * 60 * 1000, // 1h
       },
     }),
+  );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, 
+      //forbidNonWhitelisted: true, 
+      transform: true,
+    }),
+    new I18nValidationPipe(),
   );
 
   // Configure directory for static files (CSS, JS, images, ...)
@@ -48,6 +58,17 @@ async function bootstrap() {
             return req.t(key);
           }
           return key;
+        },
+        dash: (a, b) => `${a}-${b}`,
+        gt: (a, b) => a > b,
+        lt: (a, b) => a < b,
+        dec: (value) => parseInt(value) - 1,
+        range: function (start, end) {
+          let result: number[] = [];
+          for (let i = parseInt(start); i <= parseInt(end); i++) {
+            result.push(i);
+          }
+          return result;
         },
       },
     }),

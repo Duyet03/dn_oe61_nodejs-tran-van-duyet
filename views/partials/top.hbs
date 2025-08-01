@@ -12,19 +12,19 @@
         <li><a class="dropdown-item" href="?lang=en">🇬🇧 English</a></li>
       </ul>
     </div>
-    {{#if user}}
-      <ul class="navbar-nav me-3">
-          <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                  <i class="fas fa-user"></i> {{user.name}}
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                  <li><span class="dropdown-item-text"><small>Role: {{user.role.name}}</small></span></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-              </ul>
-          </li>
-      </ul>
-    {{/if}}
+      {{#if user}}
+        <ul class="navbar-nav me-3">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                    <img class="rounded-circle" width="30px" src="{{ user.avatar }}" alt=""> {{user.name}}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item-text"><small>Role: {{user.role.name}}</small></span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+      {{/if}}
   </div>
 </header>

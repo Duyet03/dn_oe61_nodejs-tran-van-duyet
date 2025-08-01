@@ -1,1 +1,149 @@
-<h1>{{ users }}</h1>
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <h2>{{ t.userManagement }}</h2>
+        <button data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary">{{t.add}}</button>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr class="text-center align-middle">
+                    <th>#</th>
+                    <th>{{t.fullName}}</th>
+                    <th>{{t.email}}</th>
+                    <th>{{t.phone}}</th>
+                    <th>{{t.avatar}}</th>
+                    <th>{{t.description}}</th>
+                    <th>{{t.role}}</th>
+                    <th>{{t.plan}}</th>
+                    <th>{{t.status}}</th>
+                    <th>{{t.actions}}</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                {{#each users}}
+                <tr>
+                    <td class="text-center align-middle">{{inc @index}}</td>
+                    <td class="align-middle">{{name}}</td>
+                    <td class="align-middle">{{email}}</td>
+                    <td class="align-middle">{{phone}}</td>
+                    <td class="text-center align-middle">
+                        <img class="rounded-circle" width="50px" src="{{avatar}}" alt="">
+                    </td>
+                    <td class="align-middle">{{description}}</td>
+                    <td class="text-center align-middle">{{role.name}}</td>
+                    <td class="text-center align-middle">{{plan.name}}</td>
+                    <td class="text-center align-middle">
+                        {{#if (eq status 1)}}
+                        <button class="btn btn-success">{{../t.active}}</button>
+                        {{else}}
+                        <button class="btn btn-warning">{{../t.close}}</button>
+                        {{/if}}
+                    </td>
+                    <td class="text-center align-middle text-nowrap">
+                        <button data-bs-toggle="modal" data-bs-target="#edit" class="btn btn-info" 
+                        data-id="{{id}}"
+                        data-name="{{name}}"
+                        data-email="{{email}}"
+                        data-phone="{{phone}}"
+                        data-avatar="{{avatar}}"
+                        data-description="{{description}}"
+                        data-role_id="{{role_id}}"
+                        data-plan_id="{{plan_id}}"
+                        data-status="{{status}}"
+                        >{{../t.update}}</button>
+                        <button data-id="{{id}}"  data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-danger">{{../t.delete}}</button>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <!-- Modal Edit -->
+        <div class="modal fade" id="edit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form class="modal-form" data-url="/users" data-method="PUT">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{t.editUser}}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <input type="hidden" name="id" id="edit-id"/>
+                                {{> userFormFields prefix="edit-" roles=roles plans=plans }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{t.cancel}}</button>
+                            <button type="submit" class="btn btn-primary">{{t.update}}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Modal add -->
+        <div class="modal fade" id="add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form class="modal-form" data-url="/users" data-method="POST">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{t.createUser}}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                {{> userFormFields prefix="" roles=roles plans=plans }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{t.cancel}}</button>
+                            <button type="submit" class="btn btn-primary">{{t.create}}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Xoa -->
+        <div class="modal fade" id="deleteModal" tabindex="-1">
+            <div class="modal-dialog">
+                <form class="modal-form" data-url="" data-method="DELETE">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title">{{t.deleteConfirmTitle}}</h5>
+                        </div>
+                        <div class="modal-body">
+                        <input type="hidden" id="deleteUserModal-id" name="id">
+                        <p>{{t.deleteConfirmText}}</p>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{t.cancel}}</button>
+                        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">{{t.delete}}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+<nav aria-label="User pagination" class="mt-4">
+    <ul class="pagination justify-content-center" id="paginationWrapper">
+        {{#if (gt currentPage 1)}}
+        <li class="page-item">
+            <a class="page-link" href="?page={{dec currentPage}}&limit={{limit}}">Previous</a>
+        </li>
+        {{/if}}
+
+        {{#each (range 1 totalPages)}}
+        <li class="page-item {{#if (eq this ../currentPage)}}active{{/if}}">
+            <a class="page-link" href="?page={{this}}&limit={{../limit}}">{{this}}</a>
+        </li>
+        {{/each}}
+
+        {{#if (lt currentPage totalPages)}}
+        <li class="page-item">
+            <a class="page-link" href="?page={{inc currentPage}}&limit={{limit}}">Next</a>
+        </li>
+        {{/if}}
+    </ul>
+</nav>
+

@@ -26,6 +26,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
         name: payload.name,
         role: { name: payload.role },
         lang: lang,
+        avatar : payload.avatar,
       };
       req['user'] = user;
       res.locals.user = user; // display in view (Handlebars)
