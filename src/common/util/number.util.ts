@@ -3,5 +3,3 @@ export function toPositiveInt(value: unknown, defaultValue = 1): number {
   if (Number.isFinite(n) && n > 0) return Math.trunc(n);
   return defaultValue;
 }
-
-
