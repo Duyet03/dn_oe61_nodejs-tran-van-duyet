@@ -17,6 +17,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { toPositiveInt } from '../../common/util/number.util';
 
 @UseGuards(JwtAuthGuard)
 @Controller('category')
@@ -46,8 +47,8 @@ export class CategoryController {
     @Query('page') page = 1,
     @Query('limit') limit = 5,
   ) {
-    const pageNumber = Math.max(1, Number(page));
-    const pageSize = Math.max(1, Number(limit));
+    const pageNumber = toPositiveInt(page);
+    const pageSize = toPositiveInt(limit);
 
     const t = i18n.t('category') as any;
     const [categories, total] = await this.categoryService.findAll(
@@ -72,8 +73,8 @@ export class CategoryController {
     @Query('limit') limit = 5,
     @I18n() i18n: I18nContext
   ) {
-    const pageNumber = Math.max(1, Number(page));
-    const pageSize = Math.max(1, Number(limit));
+    const pageNumber = toPositiveInt(page);
+    const pageSize = toPositiveInt(limit);
 
     const [categories, total] = await this.categoryService.findAll(pageNumber, pageSize);
     const totalPages = Math.ceil(total / pageSize);
